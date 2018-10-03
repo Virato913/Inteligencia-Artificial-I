@@ -12,22 +12,26 @@ CBoid::~CBoid()
 
 Vector CBoid::getDir()
 {
-
+	return m_dir;
 }
 
 void CBoid::setDir(Vector dir)
 {
-
+	m_dir = dir;
 }
 
 Vector CBoid::seek(Vector pos, float mag)
 {
-
+	Vector seekForce = pos - getPos();
+	seekForce.normalize();
+	return seekForce*mag;
 }
 
 Vector CBoid::flee(Vector pos, float mag)
 {
-
+	Vector fleeForce = getPos() - pos;
+	fleeForce.normalize();
+	return fleeForce*mag;
 }
 
 Vector CBoid::pursue(CBoid other, float time, float mag)
