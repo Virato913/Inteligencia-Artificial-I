@@ -1,4 +1,9 @@
 #pragma once
+
+#include <math.h>
+
+#define PI atan(1)*4
+
 struct Vector
 {
 	float x, y;
@@ -9,7 +14,7 @@ struct Vector
 	float lenght();
 	float angle();
 	float dot(Vector b);
-	Vector cross(Vector b);
+	Vector cross();
 
 	Vector operator+(Vector other);
 	void operator+=(Vector other);
