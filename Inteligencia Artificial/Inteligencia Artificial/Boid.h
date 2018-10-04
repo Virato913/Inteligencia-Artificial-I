@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Vector.h"
 
+#include <random>
+
 class CBoid : public CGameObject
 {
 private:
