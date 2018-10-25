@@ -4,7 +4,7 @@
 
 class CGameObject
 {
-private:
+protected:
 	Vector m_pos;
 
 public:

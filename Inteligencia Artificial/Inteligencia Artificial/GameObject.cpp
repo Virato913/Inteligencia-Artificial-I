@@ -2,7 +2,7 @@
 
 CGameObject::CGameObject()
 {
-
+	m_pos = Vector(0, 0);
 }
 
 CGameObject::~CGameObject()

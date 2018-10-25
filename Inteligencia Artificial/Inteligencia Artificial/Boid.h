@@ -16,7 +16,7 @@ public:
 	Vector getDir();
 	void setDir(Vector dir);
 	Vector seek(Vector pos, float mag);
-	Vector flee(Vector pos, float mag);
+	Vector flee(Vector pos, float mag, float radius = 0);
 	Vector pursue(CBoid other, float time, float mag);
 	Vector evade(CBoid other, float time, float mag);
 	Vector wanderRandom(float mag);
