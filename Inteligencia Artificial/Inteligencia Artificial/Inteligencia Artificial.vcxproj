@@ -26,6 +26,7 @@
   <ItemGroup>
     <ClCompile Include="Boid.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="Source.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

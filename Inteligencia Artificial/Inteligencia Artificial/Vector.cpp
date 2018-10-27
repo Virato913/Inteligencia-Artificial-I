@@ -39,6 +39,11 @@ float Vector::dot(Vector b)
 	return (x*b.x + y*b.y);
 }
 
+Vector Vector::projection(Vector b)
+{
+	return b * (dot(b) / pow(lenght(), 2));
+}
+
 Vector Vector::cross()
 {
 	return Vector(y, -x);

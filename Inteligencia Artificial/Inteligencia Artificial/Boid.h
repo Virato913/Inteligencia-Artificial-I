@@ -15,13 +15,13 @@ public:
 	~CBoid();
 	Vector getDir();
 	void setDir(Vector dir);
-	Vector seek(Vector pos, float mag);
-	Vector flee(Vector pos, float mag, float radius = 0);
-	Vector pursue(CBoid other, float time, float mag);
-	Vector evade(CBoid other, float time, float mag);
-	Vector wanderRandom(float mag);
-	Vector wanderDir(float dist, float radius, float angle, float mag);
-	Vector followPath(Vector pos, float mag);
-	Vector patrol(Vector pos, float mag);
+	Vector seek(Vector pos, float mag = 1);
+	Vector flee(Vector pos, float mag = 1, float radius = 0);
+	Vector pursue(CBoid other, float time, float mag = 1);
+	Vector evade(CBoid other, float time, float mag = 1);
+	Vector wanderRandom(float mag = 1);
+	Vector wanderDir(float dist, float radius, float angle, float mag = 1);
+	Vector followPath(Vector currentNode, Vector previousNode, float mag = 1);
+	Vector patrol(Vector pos, float mag = 1);
 };
 

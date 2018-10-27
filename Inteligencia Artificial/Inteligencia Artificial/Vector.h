@@ -14,6 +14,7 @@ struct Vector
 	float lenght();
 	float angle();
 	float dot(Vector b);
+	Vector projection(Vector b);
 	Vector cross();
 
 	Vector operator+(Vector other);
