@@ -5,6 +5,17 @@ CBoid::CBoid()
 	m_dir = Vector(0, 0);
 }
 
+CBoid::CBoid(Vector pos)
+{
+	m_pos = pos;
+}
+
+CBoid::CBoid(Vector pos, Vector dir)
+{
+	m_pos = pos;
+	m_dir = dir;
+}
+
 CBoid::~CBoid()
 {
 	

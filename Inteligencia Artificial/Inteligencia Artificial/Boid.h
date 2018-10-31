@@ -12,6 +12,8 @@ private:
 
 public:
 	CBoid();
+	CBoid(Vector pos);
+	CBoid(Vector pos, Vector dir);
 	~CBoid();
 	Vector getDir();
 	void setDir(Vector dir);
