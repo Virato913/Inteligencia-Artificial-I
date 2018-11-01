@@ -31,7 +31,33 @@ float Vector::lenght()
 
 float Vector::angle()
 {
-	return atan2(y, x) * 180 / PI;
+	float ret = 0;
+	if (x == 0)
+		if (y == 0)
+			return ret = 0;
+		else
+			if (y > 0)
+				return ret = 90;
+			else
+				return ret = 270;
+	else
+		if (y == 0)
+			if (x > 0)
+				return ret = 0;
+			else
+				if (x < 0)
+					return ret = 180;
+	ret = atanf(y / x) * (180 / PI);
+	ret /= 16;
+	if (x < 0 && y < 0)
+		ret += 180;
+	else
+		if (x < 0)
+			ret += 180;
+		else
+			if (y < 0)
+				ret += 360;
+	return ret;
 }
 
 float Vector::dot(Vector b)

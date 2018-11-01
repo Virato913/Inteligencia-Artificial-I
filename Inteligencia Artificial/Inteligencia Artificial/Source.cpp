@@ -23,9 +23,8 @@ int main()
 	g_Player.setPoint(0, sf::Vector2f(0, 24));
 	g_Player.setPoint(1, sf::Vector2f(24, 24));
 	g_Player.setPoint(2, sf::Vector2f(12, 0));
-	g_Player.setOrigin(12, 12);
+	g_Player.setOrigin(12, 16);
 	g_Player.setPosition(12, 12);
-	g_Player.rotate(90);
 	g_Player.setFillColor(sf::Color(0, 255, 0, 255));
 
 	sf::CircleShape goalCenter;
@@ -33,10 +32,17 @@ int main()
 	goalCenter.setFillColor(sf::Color::Black);
 	goalCenter.setPosition(g_Goal.getPosition());
 
-	//sf::CircleShape playerCenter;
-	//goalCenter.setRadius(1.0f);
-	//goalCenter.setFillColor(sf::Color::Black);
-	//goalCenter.setPosition(g_Player.getPosition());
+	sf::CircleShape playerCenter;
+	playerCenter.setRadius(1.0f);
+	playerCenter.setFillColor(sf::Color::Black);
+	playerCenter.setPosition(g_Player.getPosition());
+
+	sf::CircleShape playerRadius;
+	playerRadius.setRadius(12.0f);
+	playerRadius.setOrigin(12, 12);
+	playerRadius.setFillColor(sf::Color(0, 0, 0, 0));
+	playerRadius.setOutlineThickness(1.0f);
+	playerRadius.setOutlineColor(sf::Color(0, 0, 0, 255));
 
 	CBoid player(Vector(g_Player.getPosition().x, g_Player.getPosition().y));
 	bool seek = false;
@@ -52,26 +58,27 @@ int main()
 				if (event.key.code == sf::Keyboard::W)
 				{
 					newDir = Vector(0, -1);
-					g_Player.rotate((newDir - player.getDir()).angle());
+					//g_Player.rotate((newDir - player.getDir()).angle());
 					player.setDir(newDir);
 				}
 				if (event.key.code == sf::Keyboard::S)
 				{
 					newDir = Vector(0, 1);
-					g_Player.rotate((newDir - player.getDir()).angle());
+					//g_Player.rotate((newDir - player.getDir()).angle());
 					player.setDir(newDir);
 				}
 				if (event.key.code == sf::Keyboard::A)
 				{
 					newDir = Vector(-1, 0);
-					g_Player.rotate((newDir - player.getDir()).angle());
+					//g_Player.rotate((newDir - player.getDir()).angle());
 					player.setDir(newDir);
 				}
 				if (event.key.code == sf::Keyboard::D)
 				{
 					newDir = Vector(1, 0);
-					g_Player.rotate((newDir - player.getDir()).angle());
+					//g_Player.rotate((newDir - player.getDir()).angle());
 					player.setDir(newDir);
+					player.getDir().angle();
 				}
 				if (event.key.code == sf::Keyboard::Numpad1)
 				{
@@ -92,13 +99,22 @@ int main()
 				window.close();
 		}
 
+		playerCenter.setPosition(g_Player.getPosition());
+		playerRadius.setPosition(g_Player.getPosition());
+
 		window.clear();
 		window.draw(g_Background);
 		window.draw(g_Goal);
+		g_Player.rotate(player.getDir().angle() + 90);
 		window.draw(g_Player);
 		window.draw(goalCenter);
-		//window.draw(playerCenter);
+		window.draw(playerCenter);
+		window.draw(playerRadius);
 		window.display();
+
+		//This will reset the player rotation to 0
+		float rot = 0 - g_Player.getRotation();
+		g_Player.rotate(rot);
 
 		//These lines update the possition of the player
 		//0.05f is the velocity at which the player travels
@@ -113,7 +129,7 @@ int main()
 			Vector newDir = player.seek(goal);
 			newDir += player.getDir();
 			newDir.normalize();
-			g_Player.rotate((newDir - player.getDir()).angle() + 180);
+			//g_Player.rotate((newDir - player.getDir()).angle() + 180);
 			player.setDir(newDir);
 		}
 	}
