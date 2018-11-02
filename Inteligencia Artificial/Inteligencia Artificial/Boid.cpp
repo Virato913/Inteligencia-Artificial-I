@@ -3,17 +3,23 @@
 CBoid::CBoid()
 {
 	m_dir = Vector(0, 0);
+	m_vel = Vector(0, 0);
+	m_speed = 0.1f;
 }
 
 CBoid::CBoid(Vector pos)
 {
 	m_pos = pos;
+	m_vel = Vector(0, 0);
+	m_speed = 0.1f;
 }
 
 CBoid::CBoid(Vector pos, Vector dir)
 {
 	m_pos = pos;
 	m_dir = dir;
+	m_vel = Vector(0, 0);
+	m_speed = 0.1f;
 }
 
 CBoid::~CBoid()
@@ -31,6 +37,26 @@ void CBoid::setDir(Vector dir)
 	m_dir = dir;
 }
 
+Vector CBoid::getVel()
+{
+	return m_vel;
+}
+
+void CBoid::setVel(Vector vel)
+{
+	m_vel = vel;
+}
+
+float CBoid::getSpeed()
+{
+	return m_speed;
+}
+
+void CBoid::setSpeed(float speed)
+{
+	m_speed = speed;
+}
+
 Vector CBoid::seek(Vector pos, float mag)
 {
 	Vector seekForce = pos - m_pos;
@@ -43,7 +69,7 @@ Vector CBoid::flee(Vector pos, float mag, float radius)
 	Vector fleeForce = m_pos - pos;
 	if (radius != 0)
 	{
-		if (fleeForce.lenght() < radius)
+		if (fleeForce.length() < radius)
 			fleeForce.normalize();
 		else
 			fleeForce *= 0;
@@ -51,6 +77,19 @@ Vector CBoid::flee(Vector pos, float mag, float radius)
 	else
 		fleeForce.normalize();
 	return fleeForce * mag;
+}
+
+Vector CBoid::arrive(Vector pos, float mag, float radius)
+{
+	Vector arriveForce = pos - m_pos;
+	float dist = arriveForce.length();
+		arriveForce.normalize();
+		arriveForce *= mag;
+	if (dist < radius)
+	{
+		arriveForce *= (dist / radius);
+	}
+	return arriveForce;
 }
 
 Vector CBoid::pursue(CBoid other, float time, float mag)

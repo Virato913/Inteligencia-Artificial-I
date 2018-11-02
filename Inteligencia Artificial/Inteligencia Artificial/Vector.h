@@ -11,7 +11,7 @@ struct Vector
 	Vector(float a, float b);
 	Vector normalized();
 	void normalize();
-	float lenght();
+	float length();
 	float angle();
 	float dot(Vector b);
 	Vector projection(Vector b);

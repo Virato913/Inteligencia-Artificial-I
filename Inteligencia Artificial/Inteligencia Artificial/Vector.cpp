@@ -21,10 +21,10 @@ Vector Vector::normalized()
 
 void Vector::normalize()
 {
-	*this = *this / this->lenght();
+	*this = *this / this->length();
 }
 
-float Vector::lenght()
+float Vector::length()
 {
 	return sqrt(pow(x, 2) + pow(y, 2));
 }
@@ -67,7 +67,7 @@ float Vector::dot(Vector b)
 
 Vector Vector::projection(Vector b)
 {
-	return b * (dot(b) / pow(lenght(), 2));
+	return b * (dot(b) / pow(length(), 2));
 }
 
 Vector Vector::cross()
