@@ -29,7 +29,7 @@ public:
 	Vector arrive(Vector pos, float mag = 1, float radius = 1);
 	Vector pursue(CBoid other, float time, float mag = 1);
 	Vector evade(CBoid other, float time, float mag = 1);
-	Vector wanderRandom(float mag = 1);
+	Vector wanderRandom(int _x, int _y);
 	Vector wanderDir(float dist, float radius, float angle, float mag = 1);
 	Vector followPath(Vector currentNode, Vector previousNode, float mag = 1);
 	Vector patrol(Vector pos, float mag = 1);

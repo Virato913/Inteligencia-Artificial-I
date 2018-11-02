@@ -4,14 +4,14 @@ CBoid::CBoid()
 {
 	m_dir = Vector(0, 0);
 	m_vel = Vector(0, 0);
-	m_speed = 0.1f;
+	m_speed = 100.0f;
 }
 
 CBoid::CBoid(Vector pos)
 {
 	m_pos = pos;
 	m_vel = Vector(0, 0);
-	m_speed = 0.1f;
+	m_speed = 100.0f;
 }
 
 CBoid::CBoid(Vector pos, Vector dir)
@@ -19,7 +19,7 @@ CBoid::CBoid(Vector pos, Vector dir)
 	m_pos = pos;
 	m_dir = dir;
 	m_vel = Vector(0, 0);
-	m_speed = 0.1f;
+	m_speed = 100.0f;
 }
 
 CBoid::~CBoid()
@@ -83,8 +83,8 @@ Vector CBoid::arrive(Vector pos, float mag, float radius)
 {
 	Vector arriveForce = pos - m_pos;
 	float dist = arriveForce.length();
-		arriveForce.normalize();
-		arriveForce *= mag;
+	arriveForce.normalize();
+	arriveForce *= mag;
 	if (dist < radius)
 	{
 		arriveForce *= (dist / radius);
@@ -106,14 +106,14 @@ Vector CBoid::evade(CBoid other, float time, float mag)
 	return evadeForce * mag;
 }
 
-Vector CBoid::wanderRandom(float mag)
+Vector CBoid::wanderRandom(int _x, int _y)
 {
 	std::random_device rd;
 	std::mt19937 eng(rd());
-	std::uniform_real_distribution<> distr(-1, 1);
-	Vector pivot(distr(eng), distr(eng));
-	pivot.normalize();
-	return pivot * mag;
+	std::uniform_int_distribution<> distrx(12, _x);
+	std::uniform_int_distribution<> distry(12, _y);
+	Vector pivot(distrx(eng), distry(eng));
+	return pivot;
 }
 
 Vector CBoid::wanderDir(float dist, float radius, float angle, float mag)
@@ -123,14 +123,17 @@ Vector CBoid::wanderDir(float dist, float radius, float angle, float mag)
 	//Get a random angle within the circle
 	std::random_device rd;
 	std::mt19937 eng(rd());
-	std::uniform_real_distribution<> distr(m_dir.angle() - (angle / 2), m_dir.angle() + (angle / 2));
-	float newAngle = distr(eng) * PI / 180;
+	float minAngle = m_dir.angle() - (angle / 2);
+	float maxAngle = m_dir.angle() + (angle / 2);
+	std::uniform_real_distribution<> distr(minAngle, maxAngle);
+	float newAngle = distr(eng);
+	newAngle *= (PI / 180);
 	Vector pivot(cos(newAngle) * radius, sin(newAngle) * radius);
 	//Get the final point
 	Vector finalPoint = projectedPoint + pivot;
-	Vector dir = finalPoint - m_pos;
-	dir.normalize();
-	return dir * mag;
+	//Vector dir = finalPoint - m_pos;
+	//dir.normalize();
+	return finalPoint;
 }
 
 Vector CBoid::followPath(Vector currentNode, Vector previousNode, float mag)

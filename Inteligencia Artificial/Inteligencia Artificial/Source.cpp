@@ -2,6 +2,17 @@
 
 #include "Boid.h"
 
+void mySeek(CBoid& _player, Vector& _goal, Vector& _steering, float time);
+void myFlee(CBoid& _player, Vector& _enemy, float _radius, Vector& _steering, float _time);
+void myArrive(CBoid& _player, Vector& _goal, float _radius, Vector& _steering, float _time);
+void myPursue(CBoid& _pursuer, CBoid& _target);
+void myEvade(CBoid& _evader, CBoid& _enemy);
+void myWanderRandom(CBoid& _obj, Vector& _point, Vector& _steering, float& _time, float deltaTime, int _x, int _y);
+void myWanderDir(CBoid& _obj, Vector& _point, Vector& _steering, float& _time, float deltaTime);
+void resetRotation(sf::Shape& obj);
+void getNewDir(CBoid& obj);
+void updateVel(CBoid& obj, Vector& _steering, float time);
+
 int main()
 {
 	sf::ContextSettings settings;
@@ -67,13 +78,23 @@ int main()
 		sf::Vertex(sf::Vector2f(0, 0))
 	};
 
-	CBoid player(Vector(g_Player.getPosition().x, g_Player.getPosition().y));
+	CBoid player(Vector(g_Player.getPosition().x, g_Player.getPosition().y), Vector(1, 0));
 	bool seek = false;
 	bool flee = false;
 	bool arrive = false;
+	bool wanderRandom = false;
+	bool wanderDir = false;
+
+	Vector randomPoint(window.getSize().x, window.getSize().y);
+
+	sf::Clock clock;
+	float time = 0;
+	sf::Time deltaTime = sf::seconds(0);
 
 	while (window.isOpen())
 	{
+		deltaTime = clock.restart();
+		time += deltaTime.asSeconds();
 		sf::Event event;
 		Vector newDir;
 		while (window.pollEvent(event))
@@ -123,11 +144,19 @@ int main()
 				{
 					arrive = !arrive;
 				}
+				if (event.key.code == sf::Keyboard::Numpad6)
+				{
+					wanderRandom = !wanderRandom;
+				}
+				if (event.key.code == sf::Keyboard::Numpad7)
+				{
+					wanderDir = !wanderDir;
+				}
 				if (event.key.code == sf::Keyboard::R)
 				{
 					g_Player.setPosition(sf::Vector2f(12, 12));
 					player.setPos(Vector(g_Player.getPosition().x, g_Player.getPosition().y));
-					player.setDir(Vector(0, 0));
+					player.setDir(Vector(1, 0));
 				}
 				if (event.key.code == sf::Keyboard::Escape)
 				{
@@ -159,101 +188,110 @@ int main()
 		window.display();
 
 		//This will reset the player rotation to 0
-		float rot = 0 - g_Player.getRotation();
-		g_Player.rotate(rot);
+		resetRotation(g_Player);
 
 		//These lines update the position of the player
-		//if (player.getDir() != Vector(0, 0))
-		//{
-		//	//Vector newPos = player.getPos() + player.getVel();
-		//	Vector newPos = player.getPos() + (player.getDir() * 0.2f);
-		//	player.setPos(newPos);
-		//	g_Player.setPosition(sf::Vector2f(player.getPos().x, player.getPos().y));
-		//}
-
-		if (player.getDir() != Vector(0, 0))
-		{
-			Vector newPos = player.getPos() + player.getVel();
-			player.setPos(newPos);
-			g_Player.setPosition(sf::Vector2f(player.getPos().x, player.getPos().y));
-		}
+		Vector newPos = player.getPos() + (player.getVel() * deltaTime.asSeconds());
+		player.setPos(newPos);
+		g_Player.setPosition(sf::Vector2f(player.getPos().x, player.getPos().y));
 
 		//These lines will apply the seek behavior
 		if (seek)
 		{
-			//Vector goal(g_Goal.getPosition().x, g_Goal.getPosition().y);
-			//Vector desVel = player.seek(goal, 5.0f);
-			//Vector steering = desVel - player.getVel();
-			//steering.normalize();
-			//steering *= 5.0f;
-			//Vector newVel = player.getVel() + steering;
-			//newVel.normalize();
-			//newVel *= player.getSpeed();
-			//player.setDir(newVel.normalized());
-			//player.setVel(newVel);
-			//newDir += player.getDir();
-			//newDir.normalize();
-			//player.setDir(newDir);
-
 			Vector goal(g_Goal.getPosition().x, g_Goal.getPosition().y);
-			Vector newDir = player.seek(goal, 5.0f);
-			newDir += player.getDir();
-			newDir.normalize();
-			player.setDir(newDir);
+			mySeek(player, goal, newDir, deltaTime.asSeconds());
 		}
 		//These lines will apply the flee behavior
 		if (flee)
 		{
-			//Vector enemy(g_Enemy.getPosition().x, g_Enemy.getPosition().y);
-			//Vector desVel = player.flee(enemy, 5.0f, enemyRadius.getRadius() + playerRadius.getRadius());
-			//Vector steering = desVel - player.getVel();
-			//steering.normalize();
-			//steering *= 5.0f;
-			//Vector newVel = player.getVel() + steering;
-			//newVel.normalize();
-			//newVel *= player.getSpeed();
-			//player.setDir(newVel.normalized());
-			//player.setVel(newVel);
-			//newDir += player.getDir();
-			//newDir.normalize();
-			//player.setDir(newDir);
-
 			Vector enemy(g_Enemy.getPosition().x, g_Enemy.getPosition().y);
-			Vector newDir = player.flee(enemy, 5.0f, enemyRadius.getRadius() + playerRadius.getRadius());
-			//if (newDir.length() > 0)
-			//{
-				newDir += player.getDir();
-				newDir.normalize();
-				player.setDir(newDir);
-			//}
-			//else
-			//	player.setDir(Vector(0, 0));
+			myFlee(player, enemy, enemyRadius.getRadius() + playerRadius.getRadius(), newDir, deltaTime.asSeconds());
 		}
 		if (arrive)
 		{
-			//Vector goal(g_Goal.getPosition().x, g_Goal.getPosition().y);
-			//Vector newDir = player.arrive(goal, 5.0f, goalRadius.getRadius());
-			//newDir += player.getDir();
-			//newDir.normalize();
-			//player.setDir(newDir);
 			Vector goal(g_Goal.getPosition().x, g_Goal.getPosition().y);
-			Vector vel = player.arrive(goal, 500.0f, goalRadius.getRadius() + playerRadius.getRadius());
-			if (vel.length() > 0.05f)
-			{
-				Vector newVel = vel - player.getVel();
-				player.setSpeed(1.0f);
-				player.setVel((player.getVel() + newVel).normalized()*player.getSpeed());
-				player.setDir(player.getVel().normalized());
-			}
-			else
-			{
-				Vector newVel = vel - player.getVel();
-				player.setSpeed(0.0f);
-				player.setVel((player.getVel() + newVel).normalized()*player.getSpeed());
-				player.setDir(player.getVel().normalized());
-			}
+			myArrive(player, goal, goalRadius.getRadius() + playerRadius.getRadius(), newDir, deltaTime.asSeconds());
+		}
+		if (wanderRandom)
+		{
+			myWanderRandom(player, randomPoint, newDir, time, deltaTime.asSeconds(), window.getSize().x - 12, window.getSize().y - 12);
+		}
+		if (wanderDir)
+		{
+			myWanderDir(player, randomPoint, newDir, time, deltaTime.asSeconds());
 		}
 	}
 
 	return 0;
+}
+
+void mySeek(CBoid& _player, Vector& _goal, Vector& _steering, float _time)
+{
+	_steering = _player.seek(_goal, 100.0f);
+	updateVel(_player, _steering, _time);
+}
+
+void myFlee(CBoid& _player, Vector& _enemy, float _radius, Vector& _steering, float _time)
+{
+	_steering = _player.flee(_enemy, 300.0f, _radius);
+	updateVel(_player, _steering, _time);
+}
+
+void myArrive(CBoid& _player, Vector& _goal, float _radius, Vector& _steering, float _time)
+{
+	_steering = _player.arrive(_goal, 100, _radius);
+	//updateVel(_player, _steering, _time);
+	Vector vel = _steering - _player.getVel();
+	vel /= _time;
+	if (vel.length() > _player.getSpeed())
+	{
+		vel.normalize();
+		vel *= _player.getSpeed();
+	}
+	_player.setVel(vel);
+	getNewDir(_player);
+}
+
+void myWanderRandom(CBoid& _obj, Vector& _point, Vector& _steering, float& _time, float deltaTime, int _x, int _y)
+{
+	if (_time > 2.0f)
+	{
+		_point = _obj.wanderRandom(_x, _y);
+		_time = 0;
+	}
+	mySeek(_obj, _point, _steering, deltaTime);
+}
+
+void myWanderDir(CBoid& _obj, Vector& _point, Vector& _steering, float& _time, float deltaTime)
+{
+	if (_time > 2.0f)
+	{
+		_point = _obj.wanderDir(50, 20, 30);
+		_time = 0;
+	}
+	mySeek(_obj, _point, _steering, deltaTime);
+}
+
+void resetRotation(sf::Shape& obj)
+{
+	float rot = 0 - obj.getRotation();
+	obj.rotate(rot);
+}
+
+void getNewDir(CBoid& obj)
+{
+	if (obj.getVel().length() > 0)
+		obj.setDir(obj.getVel().normalized());
+}
+
+void updateVel(CBoid& obj, Vector& _steering, float _time)
+{
+	Vector vel = obj.getVel() + (_steering * _time);
+	if (vel.length() > obj.getSpeed())
+	{
+		vel.normalize();
+		vel *= obj.getSpeed();
+	}
+	obj.setVel(vel);
+	getNewDir(obj);
 }
