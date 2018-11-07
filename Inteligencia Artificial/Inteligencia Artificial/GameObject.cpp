@@ -17,8 +17,6 @@ CGameObject::CGameObject(OBJECT_TYPE type)
 		break;
 	}
 	m_shape->setOrigin(10.0f, 10.0f);
-	m_center = new sf::CircleShape(1.0f);
-	m_center->setFillColor(sf::Color(0, 0, 0, 255));
 	switch (type)
 	{
 	case OBJECT_TYPE::GOAL:
@@ -37,6 +35,8 @@ CGameObject::CGameObject(OBJECT_TYPE type)
 	m_radius->setFillColor(sf::Color(0, 0, 0, 0));
 	m_radius->setOutlineThickness(1.0f);
 	m_radius->setOutlineColor(sf::Color(0, 0, 0, 255));
+	m_center = new sf::CircleShape(1.0f);
+	m_center->setFillColor(sf::Color(0, 0, 0, 255));
 	m_pos = Vector(0, 0);
 }
 
@@ -44,6 +44,10 @@ CGameObject::~CGameObject()
 {
 	if (m_shape)
 		delete m_shape;
+	if (m_radius)
+		delete m_radius;
+	if (m_center)
+		delete m_center;
 }
 
 Vector CGameObject::getPos()
@@ -57,6 +61,26 @@ void CGameObject::setPos(Vector pos)
 	m_shape->setPosition(VecToSFMLf(m_pos));
 	m_center->setPosition(VecToSFMLf(m_pos));
 	m_radius->setPosition(VecToSFMLf(m_pos));
+}
+
+void CGameObject::setPos(float x, float y)
+{
+	m_pos.x = x;
+	m_pos.y = y;
+	m_shape->setPosition(VecToSFMLf(m_pos));
+	m_center->setPosition(VecToSFMLf(m_pos));
+	m_radius->setPosition(VecToSFMLf(m_pos));
+}
+
+float CGameObject::getRadius()
+{
+	return m_radius->getRadius();
+}
+
+void CGameObject::setRadius(float radius)
+{
+	m_radius->setRadius(radius);
+	m_radius->setOrigin(radius, radius);
 }
 
 void CGameObject::draw(sf::RenderWindow& window)

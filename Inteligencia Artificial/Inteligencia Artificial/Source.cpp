@@ -28,30 +28,33 @@ int main()
 	CGameObject g_Enemy(OBJECT_TYPE::ENEMY);
 	g_Enemy.setPos(Vector(180, 120));
 
-	sf::CircleShape g_Player(10, 3);
-	g_Player.setOrigin(10, 10);
-	g_Player.setPosition(10, 10);
-	g_Player.setFillColor(sf::Color(0, 255, 0, 255));
+	CBoid g_Player;
+	g_Player.setPos(10.0f, 10.0f);
 
-	sf::CircleShape playerCenter;
-	playerCenter.setRadius(1.0f);
-	playerCenter.setFillColor(sf::Color::Black);
-	playerCenter.setPosition(g_Player.getPosition());
+	//sf::CircleShape g_Player(10, 3);
+	//g_Player.setOrigin(10, 10);
+	//g_Player.setPosition(10, 10);
+	//g_Player.setFillColor(sf::Color(0, 255, 0, 255));
+	//
+	//sf::CircleShape playerCenter;
+	//playerCenter.setRadius(1.0f);
+	//playerCenter.setFillColor(sf::Color::Black);
+	//playerCenter.setPosition(g_Player.getPosition());
+	//
+	//sf::CircleShape playerRadius;
+	//playerRadius.setRadius(10.0f);
+	//playerRadius.setOrigin(10, 10);
+	//playerRadius.setFillColor(sf::Color(0, 0, 0, 0));
+	//playerRadius.setOutlineThickness(1.0f);
+	//playerRadius.setOutlineColor(sf::Color(0, 0, 0, 255));
+	//
+	//sf::Vertex playerDir[] =
+	//{
+	//	sf::Vertex(g_Player.getPosition()),
+	//	sf::Vertex(sf::Vector2f(0, 0))
+	//};
 
-	sf::CircleShape playerRadius;
-	playerRadius.setRadius(10.0f);
-	playerRadius.setOrigin(10, 10);
-	playerRadius.setFillColor(sf::Color(0, 0, 0, 0));
-	playerRadius.setOutlineThickness(1.0f);
-	playerRadius.setOutlineColor(sf::Color(0, 0, 0, 255));
-
-	sf::Vertex playerDir[] =
-	{
-		sf::Vertex(g_Player.getPosition()),
-		sf::Vertex(sf::Vector2f(0, 0))
-	};
-
-	CBoid player(Vector(g_Player.getPosition().x, g_Player.getPosition().y), Vector(1, 0));
+	CBoid player(Vector(g_Player.getPos()), Vector(1, 0));
 	bool seek = false;
 	bool flee = false;
 	bool arrive = false;
@@ -126,8 +129,8 @@ int main()
 				}
 				if (event.key.code == sf::Keyboard::R)
 				{
-					g_Player.setPosition(sf::Vector2f(10, 10));
-					player.setPos(Vector(g_Player.getPosition().x, g_Player.getPosition().y));
+					g_Player.setPos(10, 10);
+					player.setPos(Vector(g_Player.getPos()));
 					player.setDir(Vector(1, 0));
 				}
 				if (event.key.code == sf::Keyboard::Escape)
@@ -139,28 +142,30 @@ int main()
 				window.close();
 		}
 
-		playerCenter.setPosition(g_Player.getPosition());
-		playerRadius.setPosition(g_Player.getPosition());
-		playerDir[0].position = sf::Vector2f(player.getPos().x, player.getPos().y);
-		playerDir[1].position = sf::Vector2f(player.getDir().x*50.0f, player.getDir().y*50.0f) + playerDir[0].position;
+		//playerCenter.setPosition(g_Player.getPosition());
+		//playerRadius.setPosition(g_Player.getPosition());
+		//playerDir[0].position = sf::Vector2f(player.getPos().x, player.getPos().y);
+		//playerDir[1].position = sf::Vector2f(player.getDir().x*50.0f, player.getDir().y*50.0f) + playerDir[0].position;
 
 		window.clear(sf::Color(102, 102, 255, 255));
 		g_Goal.draw(window);
 		g_Enemy.draw(window);
-		g_Player.rotate(player.getDir().angle() + 90);
-		window.draw(g_Player);
-		window.draw(playerCenter);
-		window.draw(playerRadius);
-		window.draw(playerDir, 2, sf::Lines);
+		g_Player.draw(window);
+		//g_Player.rotate(player.getDir().angle() + 90);
+		//window.draw(g_Player);
+		//window.draw(playerCenter);
+		//window.draw(playerRadius);
+		//window.draw(playerDir, 2, sf::Lines);
 		window.display();
 
 		//This will reset the player rotation to 0
-		resetRotation(g_Player);
+		//resetRotation(g_Player);
 
 		//These lines update the position of the player
 		Vector newPos = player.getPos() + (player.getVel() * deltaTime.asSeconds());
 		player.setPos(newPos);
-		g_Player.setPosition(sf::Vector2f(player.getPos().x, player.getPos().y));
+		g_Player.setPos(player.getPos());
+		g_Player.setDir(player.getDir());
 
 		//These lines will apply the seek behavior
 		if (seek)
@@ -172,7 +177,7 @@ int main()
 		if (flee)
 		{
 			Vector enemy(g_Enemy.getPos());
-			myFlee(player, enemy, 50 + playerRadius.getRadius(), newDir, deltaTime.asSeconds());
+			myFlee(player, enemy, g_Enemy.getRadius() + g_Player.getRadius(), newDir, deltaTime.asSeconds());
 		}
 		if (arrive)
 		{

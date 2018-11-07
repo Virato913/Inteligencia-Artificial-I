@@ -8,6 +8,7 @@
 class CBoid : public CGameObject
 {
 private:
+	sf::Vertex m_line[2];
 	Vector m_dir;
 	Vector m_vel;
 	float m_speed;
@@ -23,6 +24,7 @@ public:
 	void setVel(Vector vel);
 	float getSpeed();
 	void setSpeed(float speed);
+	void draw(sf::RenderWindow& window);
 
 	Vector seek(Vector pos, float mag = 1);
 	Vector flee(Vector pos, float mag = 1, float radius = 0);

@@ -2,6 +2,17 @@
 
 CBoid::CBoid()
 {
+	m_shape = new sf::CircleShape(10.0f, 3);
+	m_shape->setFillColor(sf::Color(0, 255, 0, 255));
+	m_shape->setOrigin(10.0f, 10.0f);
+	m_radius = new sf::CircleShape(10.0f);
+	m_radius->setOrigin(10.0f, 10.0f);
+	m_radius->setFillColor(sf::Color(0, 0, 0, 0));
+	m_radius->setOutlineThickness(1.0f);
+	m_radius->setOutlineColor(sf::Color(0, 0, 0, 255));
+	m_center = new sf::CircleShape(1.0f);
+	m_center->setFillColor(sf::Color(0, 0, 0, 255));
+	m_pos = Vector(0, 0);
 	m_dir = Vector(0, 0);
 	m_vel = Vector(0, 0);
 	m_speed = 100.0f;
@@ -9,15 +20,44 @@ CBoid::CBoid()
 
 CBoid::CBoid(Vector pos)
 {
+	m_shape = new sf::CircleShape(10.0f, 3);
+	m_shape->setFillColor(sf::Color(0, 255, 0, 255));
+	m_shape->setOrigin(10.0f, 10.0f);
+	m_radius = new sf::CircleShape(10.0f);
+	m_radius->setOrigin(10.0f, 10.0f);
+	m_radius->setFillColor(sf::Color(0, 0, 0, 0));
+	m_radius->setOutlineThickness(1.0f);
+	m_radius->setOutlineColor(sf::Color(0, 0, 0, 255));
+	m_center = new sf::CircleShape(1.0f);
+	m_center->setFillColor(sf::Color(0, 0, 0, 255));
 	m_pos = pos;
+	m_shape->setPosition(VecToSFMLf(m_pos));
+	m_center->setPosition(VecToSFMLf(m_pos));
+	m_radius->setPosition(VecToSFMLf(m_pos));
+	m_dir = Vector(0, 0);
 	m_vel = Vector(0, 0);
 	m_speed = 100.0f;
 }
 
 CBoid::CBoid(Vector pos, Vector dir)
 {
+	m_shape = new sf::CircleShape(10.0f, 3);
+	m_shape->setFillColor(sf::Color(0, 255, 0, 255));
+	m_shape->setOrigin(10.0f, 10.0f);
+	m_radius = new sf::CircleShape(10.0f);
+	m_radius->setOrigin(10.0f, 10.0f);
+	m_radius->setFillColor(sf::Color(0, 0, 0, 0));
+	m_radius->setOutlineThickness(1.0f);
+	m_radius->setOutlineColor(sf::Color(0, 0, 0, 255));
+	m_center = new sf::CircleShape(1.0f);
+	m_center->setFillColor(sf::Color(0, 0, 0, 255));
 	m_pos = pos;
+	m_shape->setPosition(VecToSFMLf(m_pos));
+	m_center->setPosition(VecToSFMLf(m_pos));
+	m_radius->setPosition(VecToSFMLf(m_pos));
 	m_dir = dir;
+	m_line[0].position = VecToSFMLf(m_pos);
+	m_line[1].position = VecToSFMLf((m_dir * 50.0f)) + m_line[0].position;
 	m_vel = Vector(0, 0);
 	m_speed = 100.0f;
 }
@@ -35,6 +75,8 @@ Vector CBoid::getDir()
 void CBoid::setDir(Vector dir)
 {
 	m_dir = dir;
+	m_line[0].position = VecToSFMLf(m_pos);
+	m_line[1].position = VecToSFMLf((m_dir * 50.0f)) + m_line[0].position;
 }
 
 Vector CBoid::getVel()
@@ -55,6 +97,15 @@ float CBoid::getSpeed()
 void CBoid::setSpeed(float speed)
 {
 	m_speed = speed;
+}
+
+void CBoid::draw(sf::RenderWindow& window)
+{
+	m_shape->setRotation(getDir().angle() + 90);
+	window.draw(*m_shape);
+	window.draw(*m_center);
+	window.draw(*m_radius);
+	window.draw(m_line, 2, sf::Lines);
 }
 
 Vector CBoid::seek(Vector pos, float mag)

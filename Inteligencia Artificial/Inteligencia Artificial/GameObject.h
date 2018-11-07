@@ -30,6 +30,9 @@ public:
 	~CGameObject();
 	Vector getPos();
 	void setPos(Vector pos);
+	void setPos(float x, float y);
+	float getRadius();
+	void setRadius(float radius);
 	void draw(sf::RenderWindow& window);
 };
 
