@@ -6,10 +6,10 @@ Vector::Vector()
 	y = 0;
 }
 
-Vector::Vector(float a, float b)
+Vector::Vector(float _x, float _y)
 {
-	x = a;
-	y = b;
+	x = _x;
+	y = _y;
 }
 
 Vector Vector::normalized()

@@ -8,7 +8,7 @@ struct Vector
 {
 	float x, y;
 	Vector();
-	Vector(float a, float b);
+	Vector(float _x, float _y);
 	Vector normalized();
 	void normalize();
 	float length();
