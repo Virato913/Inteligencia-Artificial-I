@@ -9,7 +9,6 @@ void myPursue(CBoid& _pursuer, CBoid& _target);
 void myEvade(CBoid& _evader, CBoid& _enemy);
 void myWanderRandom(CBoid& _obj, Vector& _point, Vector& _steering, float& _time, float deltaTime, int _x, int _y);
 void myWanderDir(CBoid& _obj, Vector& _point, Vector& _steering, float& _time, float deltaTime);
-void resetRotation(sf::Shape& obj);
 void getNewDir(CBoid& obj);
 void updateVel(CBoid& obj, Vector& _steering, float time);
 
@@ -30,29 +29,6 @@ int main()
 
 	CBoid g_Player;
 	g_Player.setPos(10.0f, 10.0f);
-
-	//sf::CircleShape g_Player(10, 3);
-	//g_Player.setOrigin(10, 10);
-	//g_Player.setPosition(10, 10);
-	//g_Player.setFillColor(sf::Color(0, 255, 0, 255));
-	//
-	//sf::CircleShape playerCenter;
-	//playerCenter.setRadius(1.0f);
-	//playerCenter.setFillColor(sf::Color::Black);
-	//playerCenter.setPosition(g_Player.getPosition());
-	//
-	//sf::CircleShape playerRadius;
-	//playerRadius.setRadius(10.0f);
-	//playerRadius.setOrigin(10, 10);
-	//playerRadius.setFillColor(sf::Color(0, 0, 0, 0));
-	//playerRadius.setOutlineThickness(1.0f);
-	//playerRadius.setOutlineColor(sf::Color(0, 0, 0, 255));
-	//
-	//sf::Vertex playerDir[] =
-	//{
-	//	sf::Vertex(g_Player.getPosition()),
-	//	sf::Vertex(sf::Vector2f(0, 0))
-	//};
 
 	CBoid player(Vector(g_Player.getPos()), Vector(1, 0));
 	bool seek = false;
@@ -91,19 +67,16 @@ int main()
 				if (event.key.code == sf::Keyboard::S)
 				{
 					newDir = Vector(0, 1);
-					//g_Player.rotate((newDir - player.getDir()).angle());
 					player.setDir(newDir);
 				}
 				if (event.key.code == sf::Keyboard::A)
 				{
 					newDir = Vector(-1, 0);
-					//g_Player.rotate((newDir - player.getDir()).angle());
 					player.setDir(newDir);
 				}
 				if (event.key.code == sf::Keyboard::D)
 				{
 					newDir = Vector(1, 0);
-					//g_Player.rotate((newDir - player.getDir()).angle());
 					player.setDir(newDir);
 					player.getDir().angle();
 				}
@@ -142,24 +115,11 @@ int main()
 				window.close();
 		}
 
-		//playerCenter.setPosition(g_Player.getPosition());
-		//playerRadius.setPosition(g_Player.getPosition());
-		//playerDir[0].position = sf::Vector2f(player.getPos().x, player.getPos().y);
-		//playerDir[1].position = sf::Vector2f(player.getDir().x*50.0f, player.getDir().y*50.0f) + playerDir[0].position;
-
 		window.clear(sf::Color(102, 102, 255, 255));
 		g_Goal.draw(window);
 		g_Enemy.draw(window);
 		g_Player.draw(window);
-		//g_Player.rotate(player.getDir().angle() + 90);
-		//window.draw(g_Player);
-		//window.draw(playerCenter);
-		//window.draw(playerRadius);
-		//window.draw(playerDir, 2, sf::Lines);
 		window.display();
-
-		//This will reset the player rotation to 0
-		//resetRotation(g_Player);
 
 		//These lines update the position of the player
 		Vector newPos = player.getPos() + (player.getVel() * deltaTime.asSeconds());
@@ -242,12 +202,6 @@ void myWanderDir(CBoid& _obj, Vector& _point, Vector& _steering, float& _time, f
 		_time = 0;
 	}
 	mySeek(_obj, _point, _steering, deltaTime);
-}
-
-void resetRotation(sf::Shape& obj)
-{
-	float rot = 0 - obj.getRotation();
-	obj.rotate(rot);
 }
 
 void getNewDir(CBoid& obj)
