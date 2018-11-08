@@ -1,6 +1,7 @@
 #include "SFML\Graphics.hpp"
 
 #include "Boid.h"
+#include <iostream>
 
 int main()
 {
@@ -18,7 +19,9 @@ int main()
 	g_Enemy.setPos(180, 120);
 
 	CBoid g_Player;
-	g_Player.setPos(10, 10);
+	g_Player.setPos(10, 10);		
+
+	sf::Text text;
 
 	bool seek = false;
 	bool flee = false;
@@ -34,6 +37,11 @@ int main()
 
 	while (window.isOpen())
 	{
+		system("CLS");
+		std::cout << "m_pos: " << g_Player.getPos().x << ", " << g_Player.getPos().y << std::endl;
+		std::cout << "m_vel: " << g_Player.getVel().x << ", " << g_Player.getVel().y << std::endl;
+		std::cout << "m_dir: " << g_Player.getDir().x << ", " << g_Player.getDir().y << std::endl;
+
 		deltaTime = clock.restart();
 		time += deltaTime.asSeconds();
 		sf::Event event;
@@ -78,6 +86,8 @@ int main()
 				if (event.key.code == sf::Keyboard::Numpad3)
 				{
 					arrive = !arrive;
+					g_Player.setArriveState(arrive);
+					g_Player.setArriveTarget(g_Goal.getPos());
 				}
 				if (event.key.code == sf::Keyboard::Numpad6)
 				{
@@ -102,14 +112,13 @@ int main()
 				window.close();
 		}
 
+		g_Player.update(deltaTime.asSeconds());
+		
 		window.clear(sf::Color(102, 102, 255, 255));
 		g_Goal.draw(window);
 		g_Enemy.draw(window);
 		g_Player.draw(window);
 		window.display();
-
-		g_Player.update(deltaTime.asSeconds());
 	}
-
 	return 0;
 }

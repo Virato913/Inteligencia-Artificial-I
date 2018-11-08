@@ -125,7 +125,7 @@ void CBoid::update(float deltaTime)
 	}
 	if (m_arrive)
 	{
-
+		steering += (arrive(m_arriveTarget, 100.0f, 90.0f) * 2.5f);
 	}
 	if (m_pursue)
 	{
@@ -202,7 +202,7 @@ Vector CBoid::arrive(Vector pos, float mag, float radius)
 	{
 		arriveForce *= (dist / radius);
 	}
-	return arriveForce;
+	return (arriveForce - m_vel);
 }
 
 Vector CBoid::pursue(CBoid other, float time, float mag)
