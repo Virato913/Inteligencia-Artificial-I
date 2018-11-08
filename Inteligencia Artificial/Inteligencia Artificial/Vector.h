@@ -16,6 +16,7 @@ struct Vector
 	float dot(Vector b);
 	Vector projection(Vector b);
 	Vector cross();
+	Vector truncate(float maxMag);
 
 	Vector operator+(Vector other);
 	void operator+=(Vector other);
@@ -29,4 +30,3 @@ struct Vector
 	bool operator==(Vector other);
 	bool operator!=(Vector other);
 };
-

@@ -65,11 +65,7 @@ void CGameObject::setPos(Vector pos)
 
 void CGameObject::setPos(float x, float y)
 {
-	m_pos.x = x;
-	m_pos.y = y;
-	m_shape->setPosition(VecToSFMLf(m_pos));
-	m_center->setPosition(VecToSFMLf(m_pos));
-	m_radius->setPosition(VecToSFMLf(m_pos));
+	setPos(Vector(x, y));
 }
 
 float CGameObject::getRadius()

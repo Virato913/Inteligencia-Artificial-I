@@ -35,4 +35,3 @@ public:
 	void setRadius(float radius);
 	void draw(sf::RenderWindow& window);
 };
-

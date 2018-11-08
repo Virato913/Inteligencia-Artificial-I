@@ -12,9 +12,9 @@ CBoid::CBoid()
 	m_radius->setOutlineColor(sf::Color(0, 0, 0, 255));
 	m_center = new sf::CircleShape(1.0f);
 	m_center->setFillColor(sf::Color(0, 0, 0, 255));
-	m_pos = Vector(0, 0);
-	m_dir = Vector(0, 0);
-	m_vel = Vector(0, 0);
+	setPos(Vector(0, 0));
+	setVel(Vector(0, 0));
+	setDir(Vector(0, 0));
 	m_speed = 100.0f;
 }
 
@@ -30,12 +30,9 @@ CBoid::CBoid(Vector pos)
 	m_radius->setOutlineColor(sf::Color(0, 0, 0, 255));
 	m_center = new sf::CircleShape(1.0f);
 	m_center->setFillColor(sf::Color(0, 0, 0, 255));
-	m_pos = pos;
-	m_shape->setPosition(VecToSFMLf(m_pos));
-	m_center->setPosition(VecToSFMLf(m_pos));
-	m_radius->setPosition(VecToSFMLf(m_pos));
-	m_dir = Vector(0, 0);
-	m_vel = Vector(0, 0);
+	setPos(pos);
+	setVel(Vector(0, 0));
+	setDir(Vector(0, 0));
 	m_speed = 100.0f;
 }
 
@@ -51,14 +48,9 @@ CBoid::CBoid(Vector pos, Vector dir)
 	m_radius->setOutlineColor(sf::Color(0, 0, 0, 255));
 	m_center = new sf::CircleShape(1.0f);
 	m_center->setFillColor(sf::Color(0, 0, 0, 255));
-	m_pos = pos;
-	m_shape->setPosition(VecToSFMLf(m_pos));
-	m_center->setPosition(VecToSFMLf(m_pos));
-	m_radius->setPosition(VecToSFMLf(m_pos));
-	m_dir = dir;
-	m_line[0].position = VecToSFMLf(m_pos);
-	m_line[1].position = VecToSFMLf((m_dir * 50.0f)) + m_line[0].position;
-	m_vel = Vector(0, 0);
+	setPos(pos);
+	setVel(Vector(0, 0));
+	setDir(dir);
 	m_speed = 100.0f;
 }
 
@@ -79,6 +71,11 @@ void CBoid::setDir(Vector dir)
 	m_line[1].position = VecToSFMLf((m_dir * 50.0f)) + m_line[0].position;
 }
 
+void CBoid::setDir(float x, float y)
+{
+	setDir(Vector(x, y));
+}
+
 Vector CBoid::getVel()
 {
 	return m_vel;
@@ -87,6 +84,13 @@ Vector CBoid::getVel()
 void CBoid::setVel(Vector vel)
 {
 	m_vel = vel;
+	if (m_vel.length() != 0)
+		setDir(m_vel.normalized());
+}
+
+void CBoid::setVel(float x, float y)
+{
+	setVel(Vector(x, y));
 }
 
 float CBoid::getSpeed()
@@ -108,6 +112,64 @@ void CBoid::draw(sf::RenderWindow& window)
 	window.draw(m_line, 2, sf::Lines);
 }
 
+void CBoid::update(float deltaTime)
+{
+	Vector steering;
+	if (m_seek)
+	{
+		steering += seek(m_seekTarget, 100.0f);
+	}
+	if (m_flee)
+	{
+		steering += flee(m_fleeTarget, 250.0f, 60.0f);
+	}
+	if (m_arrive)
+	{
+
+	}
+	if (m_pursue)
+	{
+
+	}
+	if (m_evade)
+	{
+
+	}
+	if (m_wanderRandom)
+	{
+
+	}
+	if (m_wanderDir)
+	{
+
+	}
+	if (m_followPath)
+	{
+
+	}
+	if (m_patrol)
+	{
+
+	}
+	Vector vel = (m_vel + (steering * deltaTime)).truncate(m_speed);
+	m_vel = vel;
+	m_pos += (m_vel*deltaTime);
+	m_shape->setPosition(VecToSFMLf(m_pos));
+	m_center->setPosition(VecToSFMLf(m_pos));
+	m_radius->setPosition(VecToSFMLf(m_pos));
+	if (m_vel.length() != 0)
+	{
+		m_dir = m_vel.normalized();
+		m_line[0].position = VecToSFMLf(m_pos);
+		m_line[1].position = VecToSFMLf((m_dir * 50.0f)) + m_line[0].position;
+	}
+	//Vector newDir = m_dir + steering;
+	//Vector newPos = m_pos + (newDir * m_speed * deltaTime).truncate(10.0f);
+
+	//m_pos = newPos;
+	//m_dir = newDir.normalized();
+}
+
 Vector CBoid::seek(Vector pos, float mag)
 {
 	Vector seekForce = pos - m_pos;
@@ -120,7 +182,7 @@ Vector CBoid::flee(Vector pos, float mag, float radius)
 	Vector fleeForce = m_pos - pos;
 	if (radius != 0)
 	{
-		if (fleeForce.length() < radius)
+		if (fleeForce.length() <= radius)
 			fleeForce.normalize();
 		else
 			fleeForce *= 0;

@@ -75,6 +75,17 @@ Vector Vector::cross()
 	return Vector(y, -x);
 }
 
+Vector Vector::truncate(float maxMag)
+{
+	float mag = length();
+	if (mag > maxMag)
+	{
+		normalize();
+		*this *= maxMag;
+	}
+	return *this;
+}
+
 Vector Vector::operator+(Vector other)
 {
 	Vector pivot = *this;
