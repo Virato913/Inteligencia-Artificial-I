@@ -133,7 +133,7 @@ void CBoid::update(float deltaTime)
 	}
 	if (m_evade)
 	{
-
+		steering += evade(*m_evadeTarget, 2.0f, 200.0f);
 	}
 	if (m_wanderRandom)
 	{
@@ -213,14 +213,18 @@ Vector CBoid::pursue(CBoid& other, float time, float mag)
 	if (m_vel.length() > (dist / time))
 		predict = dist / m_vel.length();
 	Vector pursueForce = other.getPos() + (other.getVel() * predict);
-	return seek(pursueForce, mag);
+	return arrive(pursueForce, mag, 2.0f);
 }
 
 Vector CBoid::evade(CBoid& other, float time, float mag)
 {
-	Vector evadeForce = flee(other.getDir()*time, mag) + flee(other.m_pos, mag);
-	evadeForce.normalize();
-	return evadeForce * mag;
+	Vector dir = other.getPos() - m_pos;
+	float dist = dir.length();
+	float predict = time;
+	if (m_vel.length() > (dist / time))
+		predict = dist / m_vel.length();
+	Vector evadeForce = other.getPos() + (other.getVel() * predict);
+	return flee(evadeForce, mag, 100.0f);
 }
 
 Vector CBoid::wanderRandom(int _x, int _y)

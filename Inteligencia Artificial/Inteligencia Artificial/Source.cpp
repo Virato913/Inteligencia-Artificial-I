@@ -30,6 +30,7 @@ int main()
 	bool flee = false;
 	bool arrive = false;
 	bool pursue = false;
+	bool evade = false;
 	bool wanderRandom = false;
 	bool wanderDir = false;
 
@@ -98,6 +99,12 @@ int main()
 					pursue = !pursue;
 					g_Chaser.setPursueState(pursue);
 					g_Chaser.setPursueTarget(&g_Player);
+				}
+				if (event.key.code == sf::Keyboard::Numpad5)
+				{
+					evade = !evade;
+					g_Player.setEvadeState(evade);
+					g_Player.setEvadeTarget(&g_Chaser);
 				}
 				if (event.key.code == sf::Keyboard::Numpad6)
 				{
