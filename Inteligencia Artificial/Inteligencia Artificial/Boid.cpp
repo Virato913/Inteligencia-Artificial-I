@@ -117,19 +117,19 @@ void CBoid::update(float deltaTime)
 	Vector steering;
 	if (m_seek)
 	{
-		steering += seek(m_seekTarget, 100.0f);
+		steering += seek(m_seekTarget->getPos(), 100.0f);
 	}
 	if (m_flee)
 	{
-		steering += flee(m_fleeTarget, 250.0f, 60.0f);
+		steering += flee(m_fleeTarget->getPos(), 250.0f, 60.0f);
 	}
 	if (m_arrive)
 	{
-		steering += (arrive(m_arriveTarget, 100.0f, 90.0f) * 2.5f);
+		steering += (arrive(m_arriveTarget->getPos(), 100.0f, 90.0f) * 2.5f);
 	}
 	if (m_pursue)
 	{
-
+		steering += pursue(*m_pursueTarget, 2.0f, 200.0f);
 	}
 	if (m_evade)
 	{
@@ -205,14 +205,18 @@ Vector CBoid::arrive(Vector pos, float mag, float radius)
 	return (arriveForce - m_vel);
 }
 
-Vector CBoid::pursue(CBoid other, float time, float mag)
+Vector CBoid::pursue(CBoid& other, float time, float mag)
 {
-	Vector pursueForce = seek(getDir()*time, mag);
-	pursueForce.normalize();
-	return pursueForce * mag;
+	Vector dir = other.getPos() - m_pos;
+	float dist = dir.length();
+	float predict = time;
+	if (m_vel.length() > (dist / time))
+		predict = dist / m_vel.length();
+	Vector pursueForce = other.getPos() + (other.getVel() * predict);
+	return seek(pursueForce, mag);
 }
 
-Vector CBoid::evade(CBoid other, float time, float mag)
+Vector CBoid::evade(CBoid& other, float time, float mag)
 {
 	Vector evadeForce = flee(other.getDir()*time, mag) + flee(other.m_pos, mag);
 	evadeForce.normalize();

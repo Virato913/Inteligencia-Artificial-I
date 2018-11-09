@@ -21,11 +21,15 @@ int main()
 	CBoid g_Player;
 	g_Player.setPos(10, 10);		
 
+	CBoid g_Chaser;
+	g_Chaser.setPos(710, 10);
+
 	sf::Text text;
 
 	bool seek = false;
 	bool flee = false;
 	bool arrive = false;
+	bool pursue = false;
 	bool wanderRandom = false;
 	bool wanderDir = false;
 
@@ -75,19 +79,25 @@ int main()
 				{
 					seek = !seek;
 					g_Player.setSeekState(seek);
-					g_Player.setSeekTarget(g_Goal.getPos());
+					g_Player.setSeekTarget(&g_Goal);
 				}
 				if (event.key.code == sf::Keyboard::Numpad2)
 				{
 					flee = !flee;
 					g_Player.setFleeState(flee);
-					g_Player.setFleeTarget(g_Enemy.getPos());
+					g_Player.setFleeTarget(&g_Enemy);
 				}
 				if (event.key.code == sf::Keyboard::Numpad3)
 				{
 					arrive = !arrive;
 					g_Player.setArriveState(arrive);
-					g_Player.setArriveTarget(g_Goal.getPos());
+					g_Player.setArriveTarget(&g_Goal);
+				}
+				if (event.key.code == sf::Keyboard::Numpad4)
+				{
+					pursue = !pursue;
+					g_Chaser.setPursueState(pursue);
+					g_Chaser.setPursueTarget(&g_Player);
 				}
 				if (event.key.code == sf::Keyboard::Numpad6)
 				{
@@ -113,11 +123,13 @@ int main()
 		}
 
 		g_Player.update(deltaTime.asSeconds());
+		g_Chaser.update(deltaTime.asSeconds());
 		
 		window.clear(sf::Color(102, 102, 255, 255));
 		g_Goal.draw(window);
 		g_Enemy.draw(window);
 		g_Player.draw(window);
+		g_Chaser.draw(window);
 		window.display();
 	}
 	return 0;

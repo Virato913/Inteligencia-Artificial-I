@@ -23,11 +23,11 @@ private:
 	bool m_followPath = false;
 	bool m_patrol = false;
 
-	Vector m_seekTarget = Vector(0,0);
-	Vector m_fleeTarget = Vector(0,0);
-	Vector m_arriveTarget = Vector(0,0);
-	Vector m_pursueTarget = Vector(0,0);
-	Vector m_evadeTarget = Vector(0,0);
+	CGameObject* m_seekTarget = nullptr;
+	CGameObject* m_fleeTarget = nullptr;
+	CGameObject* m_arriveTarget = nullptr;
+	CBoid* m_pursueTarget = nullptr;
+	CBoid* m_evadeTarget = nullptr;
 	//Vector m_wanderRandomTarget = Vector(0,0);
 	//Vector m_wanderDirTarget = Vector(0,0);
 	//Vector m_followPathTarget = Vector(0,0);
@@ -59,11 +59,11 @@ public:
 	void setFollowPathState(bool bVal) { m_followPath = bVal; }
 	void setPatrolState(bool bVal) { m_patrol = bVal; }
 
-	void setSeekTarget(Vector& target) { m_seekTarget = target; }
-	void setFleeTarget(Vector& target) { m_fleeTarget = target; }
-	void setArriveTarget(Vector& target) { m_arriveTarget = target; }
-	void setPursueTarget(Vector& target) { m_pursueTarget = target; }
-	void setEvadeTarget(Vector& target) { m_evadeTarget = target; }
+	void setSeekTarget(CGameObject* const target) { m_seekTarget = target; }
+	void setFleeTarget(CGameObject* const target) { m_fleeTarget = target; }
+	void setArriveTarget(CGameObject* const target) { m_arriveTarget = target; }
+	void setPursueTarget(CBoid* const target) { m_pursueTarget = target; }
+	void setEvadeTarget(CBoid* const target) { m_evadeTarget = target; }
 	//void setWanderRandomTarget(Vector& target) { m_wanderRandomTarget = target; }
 	//void setWanderDirTarget(Vector& target) { m_wanderDirTarget = target; }
 	//void setFollowPathTarget(Vector& target) { m_followPathTarget = target; }
@@ -72,8 +72,8 @@ public:
 	Vector seek(Vector pos, float mag = 1);
 	Vector flee(Vector pos, float mag = 1, float radius = 0);
 	Vector arrive(Vector pos, float mag = 1, float radius = 1);
-	Vector pursue(CBoid other, float time, float mag = 1);
-	Vector evade(CBoid other, float time, float mag = 1);
+	Vector pursue(CBoid& other, float time, float mag = 1);
+	Vector evade(CBoid& other, float time, float mag = 1);
 	Vector wanderRandom(int _x, int _y);
 	Vector wanderDir(float dist, float radius, float angle, float mag = 1);
 	Vector followPath(Vector currentNode, Vector previousNode, float mag = 1);
