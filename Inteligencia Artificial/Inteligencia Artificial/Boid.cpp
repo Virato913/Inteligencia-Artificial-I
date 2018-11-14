@@ -114,6 +114,8 @@ void CBoid::draw(sf::RenderWindow& window)
 
 void CBoid::update(float deltaTime)
 {
+	static float time = 0;
+	time += deltaTime;
 	Vector steering;
 	if (m_seek)
 	{
@@ -129,19 +131,27 @@ void CBoid::update(float deltaTime)
 	}
 	if (m_pursue)
 	{
-		steering += pursue(*m_pursueTarget, 2.0f, 200.0f);
+		steering += pursue(*m_pursueTarget, 1.0f, 200.0f);
 	}
 	if (m_evade)
 	{
-		steering += evade(*m_evadeTarget, 2.0f, 200.0f);
+		steering += evade(*m_evadeTarget, 1.0f, 200.0f);
 	}
 	if (m_wanderRandom)
 	{
-
+		if (time > 2.0f)
+		{
+			steering += wanderRandom() * m_speed;
+			time = 0;
+		}
 	}
 	if (m_wanderDir)
 	{
-
+		if (time > 2.0f)
+		{
+			steering += wanderDir(50.0f, 60.0f, 90.0f);
+			time = 0;
+		}
 	}
 	if (m_followPath)
 	{
@@ -152,22 +162,20 @@ void CBoid::update(float deltaTime)
 
 	}
 	Vector vel = (m_vel + (steering * deltaTime)).truncate(m_speed);
-	m_vel = vel;
-	m_pos += (m_vel*deltaTime);
-	m_shape->setPosition(VecToSFMLf(m_pos));
-	m_center->setPosition(VecToSFMLf(m_pos));
-	m_radius->setPosition(VecToSFMLf(m_pos));
-	if (m_vel.length() != 0)
-	{
-		m_dir = m_vel.normalized();
-		m_line[0].position = VecToSFMLf(m_pos);
-		m_line[1].position = VecToSFMLf((m_dir * 50.0f)) + m_line[0].position;
-	}
-	//Vector newDir = m_dir + steering;
-	//Vector newPos = m_pos + (newDir * m_speed * deltaTime).truncate(10.0f);
-
-	//m_pos = newPos;
-	//m_dir = newDir.normalized();
+	if (vel.length() > 1.0f)
+		setVel(vel);
+	else
+		setVel(0, 0);
+	Vector pos = m_pos + (m_vel * deltaTime);
+	if (pos.x < 0)
+		pos.x += 720;
+	if (pos.x > 720)
+		pos.x -= 720;
+	if (pos.y < 0)
+		pos.y += 480;
+	if (pos.y > 480)
+		pos.y -= 480;
+	setPos(pos);
 }
 
 Vector CBoid::seek(Vector pos, float mag)
@@ -213,7 +221,7 @@ Vector CBoid::pursue(CBoid& other, float time, float mag)
 	if (m_vel.length() > (dist / time))
 		predict = dist / m_vel.length();
 	Vector pursueForce = other.getPos() + (other.getVel() * predict);
-	return arrive(pursueForce, mag, 2.0f);
+	return (arrive(pursueForce, mag, 36.0f) * 2.5f);
 }
 
 Vector CBoid::evade(CBoid& other, float time, float mag)
@@ -224,16 +232,16 @@ Vector CBoid::evade(CBoid& other, float time, float mag)
 	if (m_vel.length() > (dist / time))
 		predict = dist / m_vel.length();
 	Vector evadeForce = other.getPos() + (other.getVel() * predict);
-	return flee(evadeForce, mag, 100.0f);
+	return flee(evadeForce, mag, 50.0f);
 }
 
-Vector CBoid::wanderRandom(int _x, int _y)
+Vector CBoid::wanderRandom()
 {
 	std::random_device rd;
 	std::mt19937 eng(rd());
-	std::uniform_int_distribution<> distrx(12, _x);
-	std::uniform_int_distribution<> distry(12, _y);
-	Vector pivot(distrx(eng), distry(eng));
+	std::uniform_int_distribution<> distr(-1, 1);
+	Vector pivot(distr(eng), distr(eng));
+	pivot *= m_speed;
 	return pivot;
 }
 
@@ -252,9 +260,10 @@ Vector CBoid::wanderDir(float dist, float radius, float angle, float mag)
 	Vector pivot(cos(newAngle) * radius, sin(newAngle) * radius);
 	//Get the final point
 	Vector finalPoint = projectedPoint + pivot;
-	//Vector dir = finalPoint - m_pos;
-	//dir.normalize();
-	return finalPoint;
+	Vector dir = finalPoint - m_pos;
+	dir.normalize();
+	dir *= m_speed;
+	return dir;
 }
 
 Vector CBoid::followPath(Vector currentNode, Vector previousNode, float mag)

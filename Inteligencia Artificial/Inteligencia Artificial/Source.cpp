@@ -109,10 +109,12 @@ int main()
 				if (event.key.code == sf::Keyboard::Numpad6)
 				{
 					wanderRandom = !wanderRandom;
+					g_Player.setWanderRandomState(wanderRandom);
 				}
 				if (event.key.code == sf::Keyboard::Numpad7)
 				{
 					wanderDir = !wanderDir;
+					g_Player.setWanderDirState(wanderDir);
 				}
 				if (event.key.code == sf::Keyboard::R)
 				{
