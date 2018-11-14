@@ -1,7 +1,6 @@
 #include "SFML\Graphics.hpp"
 
 #include "Boid.h"
-#include <iostream>
 
 int main()
 {
@@ -42,11 +41,6 @@ int main()
 
 	while (window.isOpen())
 	{
-		system("CLS");
-		std::cout << "m_pos: " << g_Player.getPos().x << ", " << g_Player.getPos().y << std::endl;
-		std::cout << "m_vel: " << g_Player.getVel().x << ", " << g_Player.getVel().y << std::endl;
-		std::cout << "m_dir: " << g_Player.getDir().x << ", " << g_Player.getDir().y << std::endl;
-
 		deltaTime = clock.restart();
 		time += deltaTime.asSeconds();
 		sf::Event event;

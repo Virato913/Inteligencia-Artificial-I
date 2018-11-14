@@ -139,7 +139,7 @@ void CBoid::update(float deltaTime)
 	}
 	if (m_wanderRandom)
 	{
-		if (time > 2.0f)
+		if (time > 2.5f)
 		{
 			steering += wanderRandom() * m_speed;
 			time = 0;
@@ -147,11 +147,13 @@ void CBoid::update(float deltaTime)
 	}
 	if (m_wanderDir)
 	{
-		if (time > 2.0f)
-		{
-			steering += wanderDir(50.0f, 60.0f, 90.0f);
+		if (m_dir.length() == 0)
+			setDir(wanderRandom().normalized());
+		//if (time > 2.0f)
+		//{
+			steering += wanderDir(50.0f, 60.0f, 90.0f) * m_speed;
 			time = 0;
-		}
+		//}
 	}
 	if (m_followPath)
 	{
